@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-usage-indicator"
+dynamic = ["version"]
+description = "GNOME/Ubuntu top-bar indicator showing Claude Code plan usage"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "thuanbv", email = "thuanbv2203@gmail.com" }]
+requires-python = ">=3.8"
+classifiers = [
+    "Environment :: X11 Applications :: GTK",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+claude-usage-indicator = "claude_usage_indicator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.dynamic]
+version = { attr = "claude_usage_indicator.__version__" }
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

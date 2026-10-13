@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Claude Usage Indicator
+Comment=Show Claude Code plan usage in the top bar
+Exec=claude-usage-indicator
+Icon=utilities-system-monitor
+Terminal=false
+Categories=Utility;
+X-GNOME-Autostart-enabled=true
