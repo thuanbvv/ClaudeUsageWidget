@@ -22,7 +22,7 @@ On GNOME you also need the AppIndicator extension (installed as a recommended pa
 
 ```bash
 sudo apt install python3-gi
-PYTHONPATH=src python3 -m claude_usage_indicator          # run
+PYTHONPATH=src python3 -m claude_usage_indicator          # runs detached in the background (-f to stay in foreground)
 PYTHONPATH=src python3 -m claude_usage_indicator --once   # print raw usage JSON
 pip install pytest && python -m pytest                    # tests
 ./scripts/build-deb.sh                                    # build dist/*.deb
