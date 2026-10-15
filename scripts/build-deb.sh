@@ -49,6 +49,25 @@ Description: Top-bar indicator showing Claude Code plan usage
  gauge in the GNOME/Ubuntu top bar, with exact reset times and a
  configurable refresh interval. Uses the same login as Claude Code.
 CTRL
+cat > "$stage/DEBIAN/postinst" <<'POST'
+#!/bin/sh
+# Start the indicator right away for users with an active graphical session;
+# otherwise it would only appear at the next login (XDG autostart). Best effort.
+set -e
+if [ "$1" = configure ] && command -v loginctl >/dev/null 2>&1; then
+  for s in $(loginctl list-sessions --no-legend 2>/dev/null | awk '{print $1}'); do
+    eval "$(loginctl show-session "$s" -p Active -p Type -p Name -p User 2>/dev/null | sed 's/^/S_/')"
+    [ "$S_Active" = yes ] || continue
+    case "$S_Type" in x11|wayland) ;; *) continue ;; esac
+    rt="/run/user/$S_User"
+    [ -S "$rt/bus" ] || continue
+    runuser -u "$S_Name" -- env XDG_RUNTIME_DIR="$rt" DBUS_SESSION_BUS_ADDRESS="unix:path=$rt/bus" \
+      /usr/bin/claude-usage-indicator >/dev/null 2>&1 || true
+  done
+fi
+exit 0
+POST
+chmod 755 "$stage/DEBIAN/postinst"
 mkdir -p "$root/dist"
 out="$root/dist/${pkg}_${version}_all.deb"
 fakeroot dpkg-deb --build --root-owner-group "$stage" "$out" >/dev/null

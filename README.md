@@ -16,7 +16,22 @@ sudo apt install ./claude-usage-indicator_*_all.deb
 ```
 
 On GNOME you also need the AppIndicator extension (installed as a recommended package on Ubuntu):
-`gnome-shell-extension-appindicator`. Log out and in once, then start **Claude Usage Indicator** from the app menu. It autostarts on login afterwards.
+`gnome-shell-extension-appindicator` (check with `gnome-extensions info ubuntu-appindicators@ubuntu.com`; enable with
+`gnome-extensions enable ubuntu-appindicators@ubuntu.com`).
+
+### How it runs
+
+It is **not** a systemd service, just a per-user desktop app:
+
+- The package installs `/etc/xdg/autostart/claude-usage-indicator.desktop`, so it starts on **every graphical login**.
+- On install/upgrade the `postinst` also starts it immediately for users with an active graphical session
+  (a plain `apt install` does not otherwise start anything until the next login).
+- `claude-usage-indicator` detaches into the background and holds a lock (`$XDG_RUNTIME_DIR/claude-usage-indicator.lock`),
+  so launching it twice is harmless. `-f` keeps it in the foreground and shows errors (detached mode discards output).
+
+If the icon is missing: `pgrep -af claude-usage-indicator` (running?), then `claude-usage-indicator -f` to see errors,
+and make sure the AppIndicator extension is enabled (log out/in after first enabling it). Sign in with `claude` first
+so `~/.claude/.credentials.json` exists. Restart with `pkill -f claude-usage-indicator; claude-usage-indicator`.
 
 ## From source
 
